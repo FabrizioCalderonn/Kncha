@@ -7,8 +7,14 @@ node_modules/
 .env.local
 .env.development
 .env.production
+.env.test
 **/.env
 **/.env.*
+
+# Archivos de backup de .env (por si acaso)
+.env.backup
+.env.bak
+*.env
 
 # Logs
 *.log

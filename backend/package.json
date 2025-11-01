@@ -8,7 +8,9 @@
     "dev": "nodemon src/server.js",
     "migrate": "node src/database/migrations/run_migration.js",
     "seed": "node src/database/seeds/seed.js",
-    "setup": "node src/database/setup_supabase.js"
+    "seed:complete": "node src/database/seeds/seed_complete.js",
+    "setup": "node src/database/setup_supabase.js",
+    "db:reset": "node src/database/setup_supabase.js && node src/database/seeds/seed_complete.js"
   },
   "keywords": ["sports", "booking", "reservation"],
   "author": "",

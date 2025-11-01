@@ -42,12 +42,35 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas
 const API_VERSION = process.env.API_VERSION || 'v1';
 
+// Health check endpoint
+app.get('/health', async (req, res) => {
+  const healthCheck = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+    database: 'checking...'
+  };
+
+  try {
+    await pool.query('SELECT 1');
+    healthCheck.database = 'connected';
+  } catch (error) {
+    healthCheck.database = 'disconnected';
+    healthCheck.dbError = error.message;
+  }
+
+  const httpCode = healthCheck.database === 'connected' ? 200 : 503;
+  res.status(httpCode).json(healthCheck);
+});
+
 app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'Cancha a la Vista API',
     version: API_VERSION,
     endpoints: {
+      health: '/health',
       auth: `/api/${API_VERSION}/auth`,
       venues: `/api/${API_VERSION}/venues`,
       fields: `/api/${API_VERSION}/fields`,
@@ -78,22 +101,44 @@ app.use(errorHandler);
 
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0'; // Railway necesita 0.0.0.0
 
 const startServer = async () => {
   try {
     // Test database connection
-    await pool.query('SELECT NOW()');
+    console.log('🔌 Testing database connection...');
+    const dbTest = await pool.query('SELECT NOW()');
     console.log('✅ Database connection verified');
-
-    app.listen(PORT, () => {
-      console.log('🚀 Server running in', process.env.NODE_ENV || 'development', 'mode');
-      console.log(`🌐 Server listening on port ${PORT}`);
-      console.log(`📍 API URL: http://localhost:${PORT}/api/${API_VERSION}`);
-    });
+    console.log(`   Server time: ${dbTest.rows[0].now}`);
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    process.exit(1);
+    console.error('⚠️  Database connection failed:', error.message);
+    console.error('   The server will start anyway, but database operations will fail');
+    console.error('   Please check your database configuration');
   }
+
+  // Start server even if DB fails (Railway needs the server running)
+  app.listen(PORT, HOST, () => {
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🚀 SERVER STARTED SUCCESSFULLY');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`   Host: ${HOST}`);
+    console.log(`   Port: ${PORT}`);
+    console.log(`   API Version: ${API_VERSION}`);
+    console.log(`   Time: ${new Date().toISOString()}`);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    // Log environment variables (sin valores sensibles)
+    console.log('\n📋 Configuration Check:');
+    console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+    console.log(`   DB_HOST: ${process.env.DB_HOST ? '✅ set' : '❌ not set'}`);
+    console.log(`   DB_NAME: ${process.env.DB_NAME ? '✅ set' : '❌ not set'}`);
+    console.log(`   DB_USER: ${process.env.DB_USER ? '✅ set' : '❌ not set'}`);
+    console.log(`   DB_PASSWORD: ${process.env.DB_PASSWORD ? '✅ set' : '❌ not set'}`);
+    console.log(`   JWT_SECRET: ${process.env.JWT_SECRET ? '✅ set' : '❌ not set'}`);
+    console.log(`   CORS_ORIGIN: ${process.env.CORS_ORIGIN || '❌ not set (using *)'}`);
+    console.log('');
+  });
 };
 
 startServer();
