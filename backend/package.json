@@ -10,16 +10,22 @@
     "seed": "node src/database/seeds/seed.js",
     "seed:complete": "node src/database/seeds/seed_complete.js",
     "setup": "node src/database/setup_supabase.js",
-    "db:reset": "node src/database/setup_supabase.js && node src/database/seeds/seed_complete.js"
+    "db:reset": "node src/database/setup_supabase.js && node src/database/seeds/seed_complete.js",
+    "verify": "node src/scripts/verify-config.js"
   },
-  "keywords": ["sports", "booking", "reservation"],
+  "keywords": [
+    "sports",
+    "booking",
+    "reservation"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^2.78.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
