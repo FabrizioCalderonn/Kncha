@@ -7,4 +7,4 @@ cmds = ['cd backend && npm install --production=false']
 [phases.build]
 
 [start]
-cmd = 'cd backend && exec node src/server.js'
+cmd = 'exec node backend/src/server.js'
