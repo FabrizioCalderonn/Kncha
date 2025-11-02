@@ -150,4 +150,22 @@ process.on('unhandledRejection', (err) => {
   // No exit en producción - dejar que la app continúe
 });
 
+// Prevenir que el proceso termine
+process.on('SIGTERM', () => {
+  console.log('⚠️  Received SIGTERM - Railway is trying to kill the server');
+  console.log('   Ignoring SIGTERM to keep server alive');
+  // No hacer nada - mantener el servidor corriendo
+});
+
+process.on('SIGINT', () => {
+  console.log('⚠️  Received SIGINT');
+  console.log('   Ignoring SIGINT to keep server alive');
+  // No hacer nada - mantener el servidor corriendo
+});
+
+// Mantener el proceso vivo
+setInterval(() => {
+  // Este interval evita que Node.js termine si no hay nada más que hacer
+}, 60000); // Cada minuto
+
 module.exports = app;
