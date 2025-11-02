@@ -18,6 +18,9 @@ const uploadRoutes = require('./routes/uploadRoutes');
 
 const app = express();
 
+// Trust proxy (necesario para Railway y otros servicios en la nube)
+app.set('trust proxy', 1);
+
 // Middlewares de seguridad
 app.use(helmet());
 
