@@ -150,22 +150,25 @@ process.on('unhandledRejection', (err) => {
   // No exit en producción - dejar que la app continúe
 });
 
-// Prevenir que el proceso termine
-process.on('SIGTERM', () => {
-  console.log('⚠️  Received SIGTERM - Railway is trying to kill the server');
-  console.log('   Ignoring SIGTERM to keep server alive');
-  // No hacer nada - mantener el servidor corriendo
-});
+// Graceful shutdown
+const gracefulShutdown = (signal) => {
+  console.log(`\n⚠️  Received ${signal} - Starting graceful shutdown...`);
 
-process.on('SIGINT', () => {
-  console.log('⚠️  Received SIGINT');
-  console.log('   Ignoring SIGINT to keep server alive');
-  // No hacer nada - mantener el servidor corriendo
-});
+  // Close database pool
+  pool.end(() => {
+    console.log('✅ Database pool closed');
+    console.log('👋 Server shutdown complete');
+    process.exit(0);
+  });
 
-// Mantener el proceso vivo
-setInterval(() => {
-  // Este interval evita que Node.js termine si no hay nada más que hacer
-}, 60000); // Cada minuto
+  // Force shutdown after 10 seconds if pool doesn't close
+  setTimeout(() => {
+    console.error('⚠️  Forced shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'))
 
 module.exports = app;
