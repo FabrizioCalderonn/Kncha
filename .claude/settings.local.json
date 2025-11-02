@@ -4,7 +4,8 @@
       "Read(//c/Users/Fabrizio/Desktop/**)",
       "Read(//c/Users/Fabrizio/AppData/Roaming/**)",
       "Read(//c/Users/Fabrizio/**)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

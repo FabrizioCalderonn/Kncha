@@ -3,8 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // API URL - cambiar según el entorno
 const API_URL = __DEV__
-  ? 'http://localhost:5000/api/v1'  // Desarrollo local
-  : 'https://tu-app.railway.app/api/v1';  // Producción en Railway
+  ? 'https://kncha-production.up.railway.app/api/v1'  // Railway (usamos Railway en desarrollo también)
+  : 'https://kncha-production.up.railway.app/api/v1';  // Producción en Railway
 
 const api = axios.create({
   baseURL: API_URL,

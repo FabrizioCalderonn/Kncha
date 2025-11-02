@@ -30,8 +30,9 @@ if (process.env.DATABASE_URL) {
 const pool = new Pool(poolConfig);
 
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+  console.error('⚠️  Database pool error:', err.message);
+  console.error('   The application will continue running');
+  // No exit - dejar que la app continúe
 });
 
 module.exports = pool;
