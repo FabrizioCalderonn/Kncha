@@ -4,7 +4,7 @@
   "description": "Backend para Cancha a la Vista - Sistema de reservas de canchas deportivas",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "exec node src/server.js",
     "dev": "nodemon src/server.js",
     "migrate": "node src/database/migrations/run_migration.js",
     "seed": "node src/database/seeds/seed.js",
